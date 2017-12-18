@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>979</width>
+    <height>809</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>478</height>
+         </size>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>建图</string>
+         </attribute>
+         <widget class="QtGL" name="widget" native="true">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>110</y>
+            <width>681</width>
+            <height>531</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QGroupBox" name="groupBoxControl">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>161</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>小车控制</string>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>141</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="2" column="1">
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string>停止</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="pushButton_4">
+              <property name="text">
+               <string>后退</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>前进</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>左转</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="pushButton_5">
+              <property name="text">
+               <string>右转</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBoxNavagation">
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>0</y>
+            <width>141</width>
+            <height>111</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>自助导航</string>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>20</y>
+             <width>141</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="1">
+             <widget class="QPushButton" name="btnNavStart_2">
+              <property name="text">
+               <string>结束</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="btnNavStart">
+              <property name="text">
+               <string>开始</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="btnNavStartPoint">
+              <property name="text">
+               <string>起点</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="btnNavEndPoint">
+              <property name="text">
+               <string>终点</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBoxCarVideo">
+          <property name="geometry">
+           <rect>
+            <x>690</x>
+            <y>120</y>
+            <width>251</width>
+            <height>181</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>小车采集视频</string>
+          </property>
+          <widget class="QLabel" name="label">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>70</y>
+             <width>121</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>视频图像</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBoxRadarData">
+          <property name="geometry">
+           <rect>
+            <x>700</x>
+            <y>360</y>
+            <width>221</width>
+            <height>211</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>雷达采集信息</string>
+          </property>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>80</y>
+             <width>121</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>二为雷达图像</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBoxSlam">
+          <property name="geometry">
+           <rect>
+            <x>170</x>
+            <y>0</y>
+            <width>141</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>自主建图</string>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>20</y>
+             <width>131</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="0">
+             <widget class="QPushButton" name="pushButton_12">
+              <property name="text">
+               <string>起点</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="pushButton_13">
+              <property name="text">
+               <string>开始</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="pushButton_10">
+              <property name="text">
+               <string>结束</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="pushButton_15">
+              <property name="text">
+               <string>终点</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QPushButton" name="pushButton_17">
+          <property name="geometry">
+           <rect>
+            <x>580</x>
+            <y>20</y>
+            <width>85</width>
+            <height>33</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>通信</string>
+          </property>
+         </widget>
+         <widget class="QTextEdit" name="textEdit">
+          <property name="geometry">
+           <rect>
+            <x>680</x>
+            <y>20</y>
+            <width>91</width>
+            <height>31</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_2">
+         <attribute name="title">
+          <string>导航</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="title">
+          <string>控制界面</string>
+         </attribute>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>979</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionCatScreen"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>工具</string>
+    </property>
+    <addaction name="actionProperty_Editor"/>
+    <addaction name="actionCapture_Image"/>
+    <addaction name="actionFull_Screen"/>
+    <addaction name="actionShowRadarImage"/>
+    <addaction name="actionShowCameraImage"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionShowAuthorInfo"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>加载</string>
+    </property>
+    <addaction name="actionRbpf_slam"/>
+    <addaction name="actionRawlog"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
+   <addaction name="menu"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionProperty_Editor"/>
+   <addaction name="actionCapture_Image"/>
+   <addaction name="actionFull_Screen"/>
+   <addaction name="actionHelp"/>
+   <addaction name="separator"/>
+   <addaction name="actionExit"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/Folder-Open-icon.png</normaloff>:/new/prefix1/Folder-Open-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开</string>
+   </property>
+   <property name="toolTip">
+    <string>Open a gridmap file</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/Close-2-icon.png</normaloff>:/new/prefix1/Close-2-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>退出</string>
+   </property>
+   <property name="toolTip">
+    <string>exit the application</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/window-full-screen-icon.png</normaloff>:/new/prefix1/window-full-screen-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>全屏</string>
+   </property>
+   <property name="toolTip">
+    <string>show fullscreen</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/Actions-help-about-icon.png</normaloff>:/new/prefix1/Actions-help-about-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>帮助</string>
+   </property>
+  </action>
+  <action name="actionProperty_Editor">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/Options-icon.png</normaloff>:/new/prefix1/Options-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D场景属性编辑</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit the properties of the scene</string>
+   </property>
+  </action>
+  <action name="actionCapture_Image">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/new/prefix1/camera-icon.png</normaloff>:/new/prefix1/camera-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>捕捉图像</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy the image of gl widget to the clipboard</string>
+   </property>
+  </action>
+  <action name="actionRbpf_slam">
+   <property name="text">
+    <string>rbpf-slam配置文件</string>
+   </property>
+   <property name="toolTip">
+    <string>打开rbpf-slam配置文件</string>
+   </property>
+  </action>
+  <action name="actionRawlog">
+   <property name="text">
+    <string>rawlog配置文件</string>
+   </property>
+   <property name="toolTip">
+    <string>打开rawlog配置文件</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </action>
+  <action name="actionCatScreen">
+   <property name="text">
+    <string>截屏</string>
+   </property>
+  </action>
+  <action name="actionShowRadarImage">
+   <property name="text">
+    <string>显示雷达图像</string>
+   </property>
+  </action>
+  <action name="actionShowCameraImage">
+   <property name="text">
+    <string>显示摄像头图像</string>
+   </property>
+  </action>
+  <action name="actionShowAuthorInfo">
+   <property name="text">
+    <string>作者信息</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QtGL</class>
+   <extends>QWidget</extends>
+   <header>QtGL.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

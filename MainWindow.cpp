@@ -2,6 +2,7 @@
 #include "MainWindow.hpp"
 //#include "/usr/include/x86_64-linux-gnu/qt5/QtGui/qguiapplication.h"
 //#include "/home/muhammad/Desktop/MRPT/samples/build-qt_integration-Desktop-Default/ui_MainWindow.h"
+//#include "../build-mrptQt-Desktop_Qt_5_10_0_GCC_64bit-Debug/ui_MainWindow.h"
 #include "../build-mrptQt-Desktop_Qt_5_10_0_GCC_64bit-Debug/ui_MainWindow.h"
 
 //#include <qt5/QtGui/QGuiApplication>
@@ -39,165 +40,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionCapture_Image->setShortcut(Qt::Key_I | Qt::CTRL);
     ui->actionProperty_Editor->setShortcut(Qt::Key_P | Qt::CTRL);
 
+    ui->centralWidget->setMouseTracking(true);
+    this->setMouseTracking(true);
 
-
-   COpenGLScene m_plot3D = QtGL::theScene;
-  // COpenGLScene m_plotScan =  QtGL::theScene;
-
-   // m_plot3D->connect(this,QMouseEvent,MainWindow::Onplot3DMouseMove);
-   // m_plot3D->connect(this,MainWindow::Onplot3DMouseMove);
-
-    // Initialize gridmap:
-        // -------------------------------
-        CMemoryStream s(DEFAULT_GRIDMAP_DATA, sizeof(DEFAULT_GRIDMAP_DATA));
-        s >> m_gridMap;
-
-        auto openGLSceneRef = &m_plot3D;
-        // Populate 3D views:
-        // -------------------------------
-        {
-            mrpt::opengl::CGridPlaneXY::Ptr obj =
-                mrpt::make_aligned_shared<mrpt::opengl::CGridPlaneXY>(
-                    -50, 50, -50, 50, 0, 1);
-            obj->setColor_u8(TColor(30, 30, 30, 50));
-            openGLSceneRef->insert(obj);
-        }
-
-        gl_grid = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
-        openGLSceneRef->insert(gl_grid);
-        this->updateMap3DView();
-
-        gl_robot = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
-            {
-                mrpt::opengl::CCylinder::Ptr obj =
-                    mrpt::make_aligned_shared<mrpt::opengl::CCylinder>(
-                        0.2f, 0.1f, 0.9f);
-                obj->setColor_u8(TColor::red());
-                gl_robot->insert(obj);
-            }
-            openGLSceneRef->insert(gl_robot);
-
-       gl_scan3D = mrpt::make_aligned_shared<mrpt::opengl::CPlanarLaserScan>();
-       gl_scan3D->enableLine(false);
-       gl_scan3D->setPointsWidth(3.0);
-       gl_robot->insert(gl_scan3D);
-
-
-       gl_robot_sensor_range =
-               mrpt::make_aligned_shared<mrpt::opengl::CDisk>(0, 0);
-           gl_robot_sensor_range->setColor_u8(TColor(0, 0, 255, 90));
-           gl_robot_sensor_range->setLocation(0, 0, 0.01);
-           gl_robot->insert(gl_robot_sensor_range);
-
-           gl_robot_path = mrpt::make_aligned_shared<mrpt::opengl::CSetOfLines>();
-           gl_robot_path->setLineWidth(1);
-           gl_robot_path->setColor_u8(TColor(40, 40, 40, 200));
-           openGLSceneRef->insert(gl_robot_path);
-
-           gl_target = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
-           {
-               mrpt::opengl::CArrow::Ptr obj;
-               obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                   1, 0, 0, 0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
-               obj->setColor_u8(TColor(0, 0, 255));
-               gl_target->insert(obj);
-               obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                   -1, 0, 0, -0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
-               obj->setColor_u8(TColor(0, 0, 255));
-               gl_target->insert(obj);
-               obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                   0, 1, 0, 0, 0.2f, 0, 0.4f, 0.05f, 0.15f);
-               obj->setColor_u8(TColor(0, 0, 255));
-               gl_target->insert(obj);
-               obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                   0, -1, 0, 0, -0.2f, 0, 0.4f, 0.05f, 0.15f);
-               obj->setColor_u8(TColor(0, 0, 255));
-               gl_target->insert(obj);
-               openGLSceneRef->insert(gl_target);
-           }
-
-
-           {  // Sign of "picking a navigation target":
-                   m_gl_placing_nav_target =
-                       mrpt::make_aligned_shared<opengl::CSetOfObjects>();
-
-                   mrpt::opengl::CArrow::Ptr obj;
-                   obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                       1, 0, 0, 0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
-                   obj->setColor_u8(TColor(0, 0, 255));
-                   m_gl_placing_nav_target->insert(obj);
-                   obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                       -1, 0, 0, -0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
-                   obj->setColor_u8(TColor(0, 0, 255));
-                   m_gl_placing_nav_target->insert(obj);
-                   obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                       0, 1, 0, 0, 0.2f, 0, 0.4f, 0.05f, 0.15f);
-                   obj->setColor_u8(TColor(0, 0, 255));
-                   m_gl_placing_nav_target->insert(obj);
-                   obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
-                       0, -1, 0, 0, -0.2f, 0, 0.4f, 0.05f, 0.15f);
-                   obj->setColor_u8(TColor(0, 0, 255));
-                   m_gl_placing_nav_target->insert(obj);
-                   m_gl_placing_nav_target->setVisibility(false);  // Start invisible.
-                   openGLSceneRef->insert(m_gl_placing_nav_target);
-               }
-               {  // Sign of "replacing the robot":
-                   m_gl_placing_robot = mrpt::make_aligned_shared<opengl::CSetOfObjects>();
-                   mrpt::opengl::CCylinder::Ptr obj =
-                       mrpt::make_aligned_shared<mrpt::opengl::CCylinder>(
-                           0.2f, 0.1f, 0.9f);
-                   obj->setColor_u8(TColor(255, 0, 0, 120));
-                   m_gl_placing_robot->insert(obj);
-
-                   m_gl_placing_robot->setVisibility(false);  // Start invisible.
-                   openGLSceneRef->insert(m_gl_placing_robot);
-               }
-
-               openGLSceneRef->insert(mrpt::opengl::stock_objects::CornerXYZ(1));
-
-             //  m_plot3D->setZoomDistance(40.0f);
-             // m_plot3D->setElevation(70.0f);
-              //m_plot3D->setAzimuth(-100.0f);
-
-
-              QtGL::azimuth = -100.0f;
-              QtGL::elevation = 70.0f;
-              QtGL:: distance = 40.0f;
-              // 插入雷达显示的        数据
-
-              // Update positions of stuff:
-              this->updateViewsDynamicObjects();
-
-
-              // Retrieve default parameters for holonomic methods:
-                  // ------------------------------------------------------
-//                  {
-//                      mrpt::utils::CConfigFi cfg;
-
-//                      m_simul_options.saveToConfigFile(cfg, "SIMULATOR");
-
-//                      mrpt::nav::CHolonomicVFF holo_VFF;
-//                      holo_VFF.options.saveToConfigFile(cfg, "VFF_CONFIG");
-
-//                      mrpt::nav::CHolonomicND holo_ND;
-//                      holo_ND.options.saveToConfigFile(cfg, "ND_CONFIG");
-
-//                     // this->edHoloParams->SetValue(_U(cfg.getContent().c_str()));
-//                      std::cout<<" config file : "<<cfg.getContent().c_str()<<std::endl;
-//                  }
-
-
-
+    timRunSimul = new QTimer(this);
+    connect(timRunSimul, SIGNAL(timeout()), this, SLOT(OntimRunSimulTrigger()));
 }
+
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
-
 }
 
 
+// ------------------------------------------------------
+//					UI init and some
+// ------------------------------------------------------
 void MainWindow::on_actionOpen_triggered()
 {
     QString name = QFileDialog::getOpenFileName(this, "Select gridmap file",tr("All files (*.*);;GRIDMAP(*.gridmap)") ,"GRIDMAP (*.gridmap)");
@@ -206,7 +65,6 @@ void MainWindow::on_actionOpen_triggered()
 
         return;
     }
-
     openFile(name);
 
 }
@@ -290,68 +148,19 @@ void MainWindow::on_actionProperty_Editor_triggered()
 void MainWindow::on_actionCapture_Image_triggered()
 {
 
-//   QtGL* w = ui->centralWidget->findChild<QtGL*>("widget");
+    //   QtGL* w = ui->centralWidget->findChild<QtGL*>("widget");
 
-//    QScreen *screen = QGuiApplication::primaryScreen();
-//    //QScreen *screen1 = QGuiApplication::primaryScreen();
-//    QPixmap pixmap;
-//    if (screen){
-//       pixmap = screen->grabWindow(w->winId());
-//       //pixmap = screen->pixmapDataFactory();
+    //    QScreen *screen = QGuiApplication::primaryScreen();
+    //    //QScreen *screen1 = QGuiApplication::primaryScreen();
+    //    QPixmap pixmap;
+    //    if (screen){
+    //       pixmap = screen->grabWindow(w->winId());
+    //       //pixmap = screen->pixmapDataFactory();
 
-//    }
-       
-
-//     QApplication::clipboard()->setPixmap(pixmap);
+    //    }
+    //     QApplication::clipboard()->setPixmap(pixmap);
      
      QMessageBox::information(this,"Capture image", "Successfully copied the image to the clipboard!");
-}
-
-
-
-void MainWindow::on_btnNavStartPoint_clicked()
-{
-    if (m_cursorPickState != cpsPlaceRobot)
-        {
-            m_cursorPickState = cpsPlaceRobot;
-
-            //m_plot3D->SetCursor(*wxCROSS_CURSOR);
-        }
-        else
-        {  // Cancel:
-            m_cursorPickState = cpsNone;
-            //m_plot3D->SetCursor(*wxSTANDARD_CURSOR);
-            m_gl_placing_robot->setVisibility(false);
-        }
-
-}
-
-void MainWindow::on_btnNavEndPoint_clicked()
-{
-    if (m_cursorPickState != cpsPickTarget)
-        {
-            m_cursorPickState = cpsPickTarget;
-            //m_plot3D->SetCursor(*wxCROSS_CURSOR);
-        }
-        else
-        {  // Cancel:
-            m_cursorPickState = cpsNone;
-           // m_plot3D->SetCursor(*wxSTANDARD_CURSOR);
-            m_gl_placing_nav_target->setVisibility(false);
-        }
-}
-
-void MainWindow::on_btnNavStart_clicked()
-{
-
-  //  reinitSimulator();
-
-}
-
-
-void MainWindow::on_btnNavEnd_clicked()
-{
-
 }
 
 
@@ -395,168 +204,120 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event){
 
     QPoint currentPos = event->pos();
 
-    float x = -mousePosition.x() + currentPos.x();
+    /*float x = -mousePosition.x() + currentPos.x();
     float y = -mousePosition.y() + currentPos.y();
 
     if(event->buttons() == Qt::LeftButton){
-
-
-
         if(x > 0){
-
-
 
         }
         else{
 
-
         }
-
     }
     if(event->buttons() == Qt::RightButton){
         if(y > 0){
 
-
-
         }
         else{
 
-
         }
-    }
-    mousePosition = currentPos;
+    }*/
 
-}
+    int X, Y;
+    X = currentPos.x();
+    Y = currentPos.y();
+    qDebug("nav target point currentPos X=%.03f Y=%.04f Z=0", currentPos.x(), currentPos.y());
+    qDebug("QtGL currentPos X=%.03f Y=%.04f Z=0", ui->widget->getMousePosition().x(),  ui->widget->getMousePosition().y());
 
+    // Intersection of 3D ray with ground plane ====================
+    TLine3D ray;
+    QtGL::theScene.getViewport()->get3DRayForPixelCoord( X, Y, ray);
 
-void MainWindow::updateMap3DView()
-{
-    gl_grid->clear();
-    m_gridMap.getAs3DObject(gl_grid);
-}
-
-// ==== holonomic_navigator_demoFrame::TOptions ======
-MainWindow::TOptions::TOptions()
-    : ROBOT_MAX_SPEED(4.0),
-      MAX_SENSOR_RADIUS(5.0),
-      SENSOR_NUM_RANGES(181),
-      SENSOR_RANGE_NOISE_STD(0.02)
-{
-}
-
-void MainWindow::TOptions::loadFromConfigFile(
-    const mrpt::utils::CConfigFileBase& source, const std::string& section)
-{
-    MRPT_START
-
-    // Load from config text:
-    MRPT_LOAD_CONFIG_VAR(ROBOT_MAX_SPEED, double, source, section);
-    MRPT_LOAD_CONFIG_VAR(MAX_SENSOR_RADIUS, double, source, section);
-    MRPT_LOAD_CONFIG_VAR(SENSOR_NUM_RANGES, uint64_t, source, section);
-    MRPT_LOAD_CONFIG_VAR(SENSOR_RANGE_NOISE_STD, double, source, section);
-
-    MRPT_END
-}
-
-void MainWindow::TOptions::saveToConfigFile(
-    mrpt::utils::CConfigFileBase& cfg, const std::string& section) const
-{
-    MRPT_START
-    const int WN = 40, WV = 20;
-
-    cfg.write(
-        section, "ROBOT_MAX_SPEED", ROBOT_MAX_SPEED, WN, WV,
-        "Maximum speed for the robot (m/s)");
-    cfg.write(
-        section, "MAX_SENSOR_RADIUS", MAX_SENSOR_RADIUS, WN, WV,
-        "Maximum range of the 360deg sensor (meters)");
-    cfg.write(
-        section, "SENSOR_NUM_RANGES", SENSOR_NUM_RANGES, WN, WV,
-        "Number of ranges in the 360deg sensor FOV");
-    cfg.write(
-        section, "SENSOR_RANGE_NOISE_STD", SENSOR_RANGE_NOISE_STD, WN, WV,
-        "Sensor noise (one sigma, in meters)");
-
-    MRPT_END
-}
-
-void MainWindow::updateViewsDynamicObjects()
-{
-    gl_robot->setLocation(m_robotPose.x, m_robotPose.y, 0);
-
-    // animate target:
+    // Create a 3D plane, e.g. Z=0
+    const TPlane ground_plane(
+                TPoint3D(0, 0, 0), TPoint3D(1, 0, 0), TPoint3D(0, 1, 0));
+    // Intersection of the line with the plane:
+    TObject3D inters;
+    intersect(ray, ground_plane, inters);
+    // Interpret the intersection as a point, if there is an intersection:
+    TPoint3D inters_pt;
+    if (inters.getPoint(inters_pt))
     {
-        const double TARGET_BOUNCE_MIN = 0.7;
-        const double TARGET_BOUNCE_MAX = 1;
+        m_curCursorPos.x = inters_pt.x;
+        m_curCursorPos.y = inters_pt.y;
+        qDebug("nav target point  X=%.03f Y=%.04f Z=0", inters_pt.x, inters_pt.y);
+        if (m_cursorPickState == cpsPickTarget)
+        {
+            m_gl_placing_nav_target->setVisibility(true);
+            m_gl_placing_nav_target->setLocation(
+                        m_curCursorPos.x, m_curCursorPos.y, 0.05);
 
-        const double TARGET_BOUNCE_PERIOD = 1.0;
-        const double t =
-            fmod(m_runtime.Tac(), TARGET_BOUNCE_PERIOD) / TARGET_BOUNCE_PERIOD;
+            qDebug("nav target point  X=%.03f Y=%.04f Z=0", m_curCursorPos.x, m_curCursorPos.y);
+        }
+        else if (m_cursorPickState == cpsPlaceRobot)
+        {
+            m_gl_placing_robot->setVisibility(true);
+            m_gl_placing_robot->setLocation(
+                        m_curCursorPos.x, m_curCursorPos.y, 0.05);
 
-        // Parabolic path
-        const double s =
-            4 * t * (TARGET_BOUNCE_MAX - TARGET_BOUNCE_MIN) * (1 - t) +
-            TARGET_BOUNCE_MIN;
+             qDebug("nav robot point  X=%.03f Y=%.04f Z=0", m_curCursorPos.x, m_curCursorPos.y);
+        }
 
-        gl_target->setLocation(m_targetPoint.x, m_targetPoint.y, 0);
-        gl_target->setScale(s);
+       // qDebug("X=%.03f Y=%.04f Z=0", m_curCursorPos.x, m_curCursorPos.y);
     }
 
-    ui->statusBar->showMessage( mrpt::format("Robot: (%.03f,%.03f)", m_robotPose.x, m_robotPose.y)
-                                   .c_str());
 
-      ui->statusBar->showMessage(mrpt::format(
-                                        "Target: (%.03f,%.03f)", m_targetPoint.x, m_targetPoint.y)
+}
 
-                                 .c_str());
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    switch (m_cursorPickState)
+        {
+            case cpsPickTarget:
+            {
+                m_targetPoint = m_curCursorPos;
 
-      ui->widget->updateScene();
-    // Show/hide:
-   // gl_robot_sensor_range->setVisibility(mnuViewMaxRange->IsChecked());
-   // gl_robot_path->setVisibility(mnuViewRobotPath->IsChecked());
+                ui->btnNavEndPoint->setEnabled(false);
+                ui->btnNavEndPoint->update();
+                m_gl_placing_nav_target->setVisibility(false);
+                qDebug("place the robot target point : %.03f %.03f",m_targetPoint.x,m_targetPoint.y);
+                break;
+            }
+            case cpsPlaceRobot:
+            {
+                m_robotPose.x = m_curCursorPos.x;
+                m_robotPose.y = m_curCursorPos.y;
 
-    // Refresh:
-    //m_plot3D->Refresh();
-   // m_plotScan->Refresh();
-  //  QtGL::theScene.Refresh();
+                ui->btnNavStartPoint->setEnabled(false);
+                ui->btnNavStartPoint->update();
+                m_gl_placing_robot->setVisibility(false);
+                 qDebug("place the robot start point : %.03f %.03f",m_targetPoint.x,m_targetPoint.y);
+                break;
+            }
+            default:
+                break;
+        }
+
+        ui->widget->setCursor(Qt::ArrowCursor);
+        //m_plot3D->SetCursor(*wxSTANDARD_CURSOR);  // End of cross cursor
+        m_cursorPickState = cpsNone;  // end of mode
+
+
 }
 
 
-//void MainWindow::OnMenuItemChangeVisibleStuff(
-//    wxCommandEvent& event)
-//{
-//    updateViewsDynamicObjects();
-//}
-
-//void MainWindow::OnMenuItemClearRobotPath(
-//    wxCommandEvent& event)
-//{
-//    gl_robot_path->clear();
-//    updateViewsDynamicObjects();
-//}
-
-
-
-void MainWindow::on_btnSlamStart_clicked()
+void MainWindow::on_btnTest_clicked()
 {
-    qDebug()<<" on_btnSlamStart_clicked debug";
-    ui->statusBar->showMessage( mrpt::format("重新开始创建地图... ")
-                                   .c_str());
+       std::cout<< "on_btnTest_clicked"<<std::endl;
 
-    initMapBuildingParams();
-    MapBuilding_RBPF();
-}
-
-void MainWindow::on_btnSlamEnd_clicked()
-{
-
-   qDebug()<<"end build map ";
 
 }
+
+
 
 
 // ------------------------------------------------------
-//					RBPF-SLAM
+//					RBPF-SLAM  MapBuilding RBPF
 // ------------------------------------------------------
 /**
  *  rbpf-slam 参数设置
@@ -664,11 +425,7 @@ void MainWindow::initMapBuildingParams(){
 
 }
 
-
-
-// ------------------------------------------------------
-//					MapBuilding RBPF
-// ------------------------------------------------------
+// MapBuilding RBPF
 void MainWindow::MapBuilding_RBPF()
 {
     qDebug()<<"Build map ";
@@ -967,8 +724,9 @@ void MainWindow::MapBuilding_RBPF()
                         curPDF.getMean(robotPose);
 
                         objCam->setPointingAt(robotPose);
-                        objCam->setAzimuthDegrees(-30);
-                        objCam->setElevationDegrees(30);
+                        //objCam->setAzimuthDegrees(-30);
+                        //objCam->setElevationDegrees(10); //30
+                        //objCam->setZoomDistance(15);  // add by test
                         scene->insert(objCam);
                     }
                     // Draw the map(s):
@@ -1050,15 +808,15 @@ void MainWindow::MapBuilding_RBPF()
 
                 if (SHOW_PROGRESS_IN_WINDOW)
                 {
-                      QtGL::azimuth = 25.0f;
-                      QtGL::elevation = -15.0f;
-                      QtGL::distance= 5.0f;
+//                    QtGL::azimuth = 25.0f;
+//                    QtGL::elevation = -15.0f;
+//                    QtGL::distance= 5.0f;
 
 
-                   // QtGL::theScene.getViewPort()->getCamera().
-                    QtGL::theScene.getViewport()->getCamera().setAzimuthDegrees(QtGL::azimuth);
-                    QtGL::theScene.getViewport()->getCamera().setElevationDegrees(QtGL::elevation);
-                    QtGL::theScene.getViewport()->getCamera().setZoomDistance(QtGL::distance);
+//                    // QtGL::theScene.getViewPort()->getCamera().
+//                    QtGL::theScene.getViewport()->getCamera().setAzimuthDegrees(QtGL::azimuth);
+//                    QtGL::theScene.getViewport()->getCamera().setElevationDegrees(QtGL::elevation);
+//                    QtGL::theScene.getViewport()->getCamera().setZoomDistance(QtGL::distance);
 
 
                     COpenGLScene tmpScene(*scene);
@@ -1070,7 +828,9 @@ void MainWindow::MapBuilding_RBPF()
 //                    QtGL::distance= 35.0f;
 
 
-                    ui->widget->repaint();
+                    ui->widget->updateScene();
+
+                //    ui->widget->repaint();
                    //QtGL::updateScene();
 //                    COpenGLScene::Ptr& scenePtr = win3D->get3DSceneAndLock();
 //                    scenePtr = scene;
@@ -1211,13 +971,646 @@ void MainWindow::MapBuilding_RBPF()
     MRPT_END
 }
 
-
-
-
-
-void MainWindow::on_btnTest_clicked()
+void MainWindow::on_btnSlamStart_clicked()
 {
-       std::cout<< "on_btnTest_clicked"<<std::endl;
+    qDebug()<<" on_btnSlamStart_clicked debug";
+    ui->statusBar->showMessage( mrpt::format("重新开始创建地图... ")
+                                   .c_str());
 
+    initMapBuildingParams();
+    MapBuilding_RBPF();
+}
+
+void MainWindow::on_btnSlamEnd_clicked()
+{
+
+   qDebug()<<"end build map ";
+
+}
+
+
+// ------------------------------------------------------
+//					Navigaion map
+// ------------------------------------------------------
+// ==== holonomic_navigator_demoFrame::TOptions ======
+MainWindow::TOptions::TOptions()
+    : ROBOT_MAX_SPEED(4.0),
+      MAX_SENSOR_RADIUS(5.0),
+      SENSOR_NUM_RANGES(181),
+      SENSOR_RANGE_NOISE_STD(0.02)
+{
+}
+
+void MainWindow::TOptions::loadFromConfigFile(
+    const mrpt::utils::CConfigFileBase& source, const std::string& section)
+{
+    MRPT_START
+
+    // Load from config text:
+    MRPT_LOAD_CONFIG_VAR(ROBOT_MAX_SPEED, double, source, section);
+    MRPT_LOAD_CONFIG_VAR(MAX_SENSOR_RADIUS, double, source, section);
+    MRPT_LOAD_CONFIG_VAR(SENSOR_NUM_RANGES, uint64_t, source, section);
+    MRPT_LOAD_CONFIG_VAR(SENSOR_RANGE_NOISE_STD, double, source, section);
+
+    MRPT_END
+}
+
+void MainWindow::TOptions::saveToConfigFile(
+    mrpt::utils::CConfigFileBase& cfg, const std::string& section) const
+{
+    MRPT_START
+    const int WN = 40, WV = 20;
+
+    cfg.write(
+        section, "ROBOT_MAX_SPEED", ROBOT_MAX_SPEED, WN, WV,
+        "Maximum speed for the robot (m/s)");
+    cfg.write(
+        section, "MAX_SENSOR_RADIUS", MAX_SENSOR_RADIUS, WN, WV,
+        "Maximum range of the 360deg sensor (meters)");
+    cfg.write(
+        section, "SENSOR_NUM_RANGES", SENSOR_NUM_RANGES, WN, WV,
+        "Number of ranges in the 360deg sensor FOV");
+    cfg.write(
+        section, "SENSOR_RANGE_NOISE_STD", SENSOR_RANGE_NOISE_STD, WN, WV,
+        "Sensor noise (one sigma, in meters)");
+
+    MRPT_END
+}
+
+
+void MainWindow::initNavitionParmas(){
+
+
+
+    COpenGLScene m_plot3D = QtGL::theScene;
+    //m_plot3D.clear();
+
+    QtGL::theScene.clear();
+    // Initialize gridmap:
+    // -------------------------------
+    CMemoryStream s(DEFAULT_GRIDMAP_DATA, sizeof(DEFAULT_GRIDMAP_DATA));
+    s >> m_gridMap;
+
+    // auto openGLSceneRef = &m_plot3D;
+    // Populate 3D views:
+    // -------------------------------
+    {
+        mrpt::opengl::CGridPlaneXY::Ptr obj =
+                mrpt::make_aligned_shared<mrpt::opengl::CGridPlaneXY>(
+                    -50, 50, -50, 50, 0, 1);
+        obj->setColor_u8(TColor(30, 30, 30, 50));
+        //openGLSceneRef->insert(obj);
+        // m_plot3D.insert(obj);
+        QtGL::theScene.insert(obj);
+    }
+
+    gl_grid = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
+    QtGL::theScene.insert(gl_grid);
+    this->updateMap3DView();
+
+    gl_robot = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
+    {
+        mrpt::opengl::CCylinder::Ptr obj =
+                mrpt::make_aligned_shared<mrpt::opengl::CCylinder>(
+                    0.2f, 0.1f, 0.9f);
+        obj->setColor_u8(TColor::red());
+        gl_robot->insert(obj);
+    }
+    QtGL::theScene.insert(gl_robot);
+    qDebug()<<" insert an robot";
+
+    gl_scan3D = mrpt::make_aligned_shared<mrpt::opengl::CPlanarLaserScan>();
+    gl_scan3D->enableLine(false);
+    gl_scan3D->setPointsWidth(3.0);
+    gl_robot->insert(gl_scan3D);
+
+    gl_robot_sensor_range =
+            mrpt::make_aligned_shared<mrpt::opengl::CDisk>(0, 0);
+    gl_robot_sensor_range->setColor_u8(TColor(0, 0, 255, 90));
+    gl_robot_sensor_range->setLocation(0, 0, 0.01);
+    gl_robot->insert(gl_robot_sensor_range);
+
+    gl_robot_path = mrpt::make_aligned_shared<mrpt::opengl::CSetOfLines>();
+    gl_robot_path->setLineWidth(1);
+    gl_robot_path->setColor_u8(TColor(40, 40, 40, 200));
+    QtGL::theScene.insert(gl_robot_path);
+
+
+    gl_target = mrpt::make_aligned_shared<mrpt::opengl::CSetOfObjects>();
+    {
+        mrpt::opengl::CArrow::Ptr obj;
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    1, 0, 0, 0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        gl_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    -1, 0, 0, -0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        gl_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    0, 1, 0, 0, 0.2f, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        gl_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    0, -1, 0, 0, -0.2f, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        gl_target->insert(obj);
+        QtGL::theScene.insert(gl_target);
+    }
+
+    {  // Sign of "picking a navigation target":
+        m_gl_placing_nav_target =
+                mrpt::make_aligned_shared<opengl::CSetOfObjects>();
+
+        mrpt::opengl::CArrow::Ptr obj;
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    1, 0, 0, 0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        m_gl_placing_nav_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    -1, 0, 0, -0.2f, 0, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        m_gl_placing_nav_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    0, 1, 0, 0, 0.2f, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        m_gl_placing_nav_target->insert(obj);
+        obj = mrpt::make_aligned_shared<mrpt::opengl::CArrow>(
+                    0, -1, 0, 0, -0.2f, 0, 0.4f, 0.05f, 0.15f);
+        obj->setColor_u8(TColor(0, 0, 255));
+        m_gl_placing_nav_target->insert(obj);
+        m_gl_placing_nav_target->setVisibility(false);  // Start invisible.
+        QtGL::theScene.insert(m_gl_placing_nav_target);
+    }
+
+
+    {  // Sign of "replacing the robot":
+        m_gl_placing_robot = mrpt::make_aligned_shared<opengl::CSetOfObjects>();
+        mrpt::opengl::CCylinder::Ptr obj =
+                mrpt::make_aligned_shared<mrpt::opengl::CCylinder>(
+                    0.2f, 0.1f, 0.9f);
+        obj->setColor_u8(TColor(255, 0, 0, 120));
+        m_gl_placing_robot->insert(obj);
+
+        m_gl_placing_robot->setVisibility(false);  // Start invisible.
+        QtGL::theScene.insert(m_gl_placing_robot);
+    }
+
+    QtGL::theScene.insert(mrpt::opengl::stock_objects::CornerXYZ(1));
+
+
+    QtGL::theScene.getViewport()->getCamera().setLocation(0.0, 0.0, 0.0);
+    QtGL::theScene.getViewport()->getCamera().setZoomDistance(40.0f);
+    QtGL::theScene.getViewport()->getCamera().setElevationDegrees(70.0f);
+    QtGL::theScene.getViewport()->getCamera().setAzimuthDegrees(-100.0f);
+    QtGL::theScene.getViewport()->getCamera().setProjectiveModel(true);
+
+    ui->widget->updateScene();
+
+
+    // 2D view ==============
+    // auto openGLScanRef = m_plotScan->getOpenGLSceneRef();
+    {
+        mrpt::opengl::CGridPlaneXY::Ptr obj =
+                mrpt::make_aligned_shared<mrpt::opengl::CGridPlaneXY>(
+                    -1, 1.001f, -1, 1.001f, 0, 1);
+        obj->setColor_u8(TColor(30, 30, 30, 50));
+        QtGL::theScene.insert(obj);
+    }
+
+    gl_scan2D = mrpt::make_aligned_shared<mrpt::opengl::CPlanarLaserScan>();
+    gl_scan2D->enableLine(false);
+    gl_scan2D->enableSurface(false);
+    gl_scan2D->setPointsWidth(3.0);
+    QtGL::theScene.insert(gl_scan2D);
+
+    gl_line_direction = mrpt::make_aligned_shared<mrpt::opengl::CSimpleLine>();
+    gl_line_direction->setLineWidth(4);
+    gl_line_direction->setColor_u8(TColor(0, 0, 0));
+    QtGL::theScene.insert(gl_line_direction);
+
+    gl_rel_target = mrpt::make_aligned_shared<mrpt::opengl::CPointCloud>();
+    gl_rel_target->setPointSize(7);
+    gl_rel_target->setColor_u8(TColor(0, 0, 255));
+    gl_rel_target->insertPoint(0, 0, 0);
+    QtGL::theScene.insert(gl_rel_target);
+
+    QtGL::theScene.insert(mrpt::opengl::stock_objects::CornerXYSimple(0.1f, 2));
+
+    gl_nd_gaps = mrpt::make_aligned_shared<mrpt::opengl::CSetOfLines>();
+    gl_nd_gaps->setLineWidth(2);
+    gl_nd_gaps->setColor_u8(TColor(204, 102, 51));
+    QtGL::theScene.insert(gl_nd_gaps);
+
+
+    ui->widget->updateScene();
+
+    QtGL::theScene.getViewport()->getCamera().setLocation(0.0, 0.0, 0.0);
+    QtGL::theScene.getViewport()->getCamera().setZoomDistance(2.2f);
+    QtGL::theScene.getViewport()->getCamera().setElevationDegrees(90.0f);
+    QtGL::theScene.getViewport()->getCamera().setAzimuthDegrees(-90.0f);
+    QtGL::theScene.getViewport()->getCamera().setProjectiveModel(false);
+
+    // Update positions of stuff:
+    this->updateViewsDynamicObjects();
+   // ui->widget->updateScene();
+
+    // Retrieve default parameters for holonomic methods:
+        // ------------------------------------------------------
+        {
+            mrpt::utils::CConfigFileMemory cfg;
+
+            m_simul_options.saveToConfigFile(cfg, "SIMULATOR");
+
+            mrpt::nav::CHolonomicVFF holo_VFF;
+            holo_VFF.options.saveToConfigFile(cfg, "VFF_CONFIG");
+
+            mrpt::nav::CHolonomicND holo_ND;
+            holo_ND.options.saveToConfigFile(cfg, "ND_CONFIG");
+
+
+            ui->etConfig->setText(cfg.getContent().c_str());
+
+        }
+
+
+}
+
+
+// Run simulator (when "running"):
+void MainWindow::OntimRunSimulTrigger()
+{
+   qDebug()<<" OntimRunSimulTrigger :  " ;
+    try
+    {
+        if (ui->btnNavEnd->isEnabled())
+        {
+            simulateOneStep(1000 * 1e-3);
+            qDebug()<<"timer 1 trigger: once OntimRunSimulTrigger :  " ;
+        }
+        updateViewsDynamicObjects();
+    }
+    catch (std::exception& e)
+    {
+        qDebug()<<e.what()<<" exception ontimRunSimulTrigger";
+        on_btnNavEnd_clicked();
+    }
+}
+
+// Create navigator object & load params from GUI:
+void MainWindow::reinitSimulator()
+{
+
+
+    // Delete old & build new navigator:
+    m_holonomicMethod.reset();
+    int set =0;
+    switch (set)
+    {
+        case 0:
+            m_holonomicMethod.reset(new mrpt::nav::CHolonomicVFF);
+            break;
+        case 1:
+            m_holonomicMethod.reset(new mrpt::nav::CHolonomicND);
+            break;
+        default:
+            throw std::runtime_error("Invalid holonomic method selected!");
+    };
+
+    // Load params:
+    {
+        CConfigFileMemory cfg;
+        cfg.setContent(ui->etConfig->toPlainText().toStdString());
+        m_holonomicMethod->initialize(cfg);
+
+        m_simul_options.loadFromConfigFile(cfg, "SIMULATOR");
+    }
+
+    // Update GUI stuff:
+    gl_robot_sensor_range->setDiskRadius(
+        m_simul_options.MAX_SENSOR_RADIUS * 1.01,
+        m_simul_options.MAX_SENSOR_RADIUS * 0.99);
+
+}
+
+
+void MainWindow::updateMap3DView()
+{
+    gl_grid->clear();
+    m_gridMap.getAs3DObject(gl_grid);
+}
+
+
+void MainWindow::simulateOneStep(double time_step)
+{
+    // Simulate 360deg range scan:
+    CObservation2DRangeScan simulatedScan;
+
+    simulatedScan.aperture = M_2PIf;
+    simulatedScan.rightToLeft = true;
+    simulatedScan.maxRange = m_simul_options.MAX_SENSOR_RADIUS;
+    simulatedScan.sensorPose = CPose3D();
+
+    m_gridMap.laserScanSimulator(
+        simulatedScan, mrpt::poses::CPose2D(m_robotPose), 0.5,
+        m_simul_options.SENSOR_NUM_RANGES,
+        m_simul_options.SENSOR_RANGE_NOISE_STD);
+
+    gl_scan3D->setScan(simulatedScan);  // Draw real scan in 3D view
+
+    // Normalize:
+    for (size_t j = 0; j < simulatedScan.scan.size(); j++)
+        simulatedScan.setScanRange(
+            j, simulatedScan.getScanRange(j) / simulatedScan.maxRange);
+
+    gl_scan2D->setScan(simulatedScan);  // Draw scaled scan in right-hand view
+
+    // Navigate:
+    mrpt::math::TPoint2D relTargetPose = mrpt::math::TPoint2D(
+        mrpt::poses::CPoint2D(m_targetPoint) -
+        mrpt::poses::CPose2D(m_robotPose));
+    relTargetPose *=
+        1.0 / simulatedScan.maxRange;  // Normalized relative target:
+
+    // tictac.Tic();
+    CAbstractHolonomicReactiveMethod::NavOutput no;
+    CAbstractHolonomicReactiveMethod::NavInput ni;
+    ni.targets.push_back(relTargetPose);
+
+    ni.obstacles.resize(simulatedScan.getScanSize());
+    for (unsigned int i = 0; i < ni.obstacles.size(); i++)
+        ni.obstacles[i] = simulatedScan.getScanRange(i);
+
+    ni.maxRobotSpeed = m_simul_options.ROBOT_MAX_SPEED;
+    ni.maxObstacleDist = m_simul_options.MAX_SENSOR_RADIUS;
+
+    this->m_holonomicMethod->navigate(ni, no);
+
+    mrpt::nav::CHolonomicLogFileRecord::Ptr out_log = no.logRecord;
+
+    // Move robot:
+    m_robotPose.x += cos(no.desiredDirection) * no.desiredSpeed * time_step;
+    m_robotPose.y += sin(no.desiredDirection) * no.desiredSpeed * time_step;
+
+    qDebug("simulateOneStep: Robot: (%.03f,%.03f) ->  Target: (%.03f,%.03f) :fangzheng: (%.03f,%.03f) ",
+            m_robotPose.x, m_robotPose.y,m_targetPoint.x, m_targetPoint.y,no.desiredDirection,no.desiredSpeed);
+
+
+    // Update path graph:
+    const TPoint3D cur_pt(m_robotPose.x, m_robotPose.y, 0.01);
+
+    if (gl_robot_path->empty())
+        gl_robot_path->appendLine(cur_pt, cur_pt);
+    else
+        gl_robot_path->appendLineStrip(cur_pt);
+
+    gl_rel_target->setLocation(relTargetPose.x, relTargetPose.y, 0);
+
+    // Clear stuff which will be updated if used below:
+    //edInfoLocalView->Clear();
+    gl_nd_gaps->clear();
+
+    // Update 2D view graphs:
+    if (out_log && IS_CLASS(out_log, CLogFileRecord_ND))
+    {
+        CLogFileRecord_ND::Ptr log =
+            std::dynamic_pointer_cast<CLogFileRecord_ND>(out_log);
+        const size_t nGaps = log->gaps_ini.size();
+
+        const string sSitu =
+            mrpt::utils::TEnumType<CHolonomicND::TSituations>::value2name(
+                log->situation);
+
+        string sLog = mrpt::format("ND situation : %s\n", sSitu.c_str());
+        sLog += mrpt::format(
+            "Gap count    : %u\n", static_cast<unsigned int>(nGaps));
+
+       // edInfoLocalView->SetValue(_U(sLog.c_str()));
+
+        gl_nd_gaps->appendLine(0, 0, 0, 0, 0, 0);
+
+        for (size_t i = 0; i < nGaps; i++)
+        {
+            const size_t N_STEPS = 20;
+            for (size_t j = 0; j < N_STEPS; j++)
+            {
+                const double sec = log->gaps_ini[i] +
+                                   j * (log->gaps_end[i] - log->gaps_ini[i]) /
+                                       static_cast<double>(N_STEPS - 1);
+                const double ang =
+                    M_PI * (-1 + 2 * sec / ((float)simulatedScan.scan.size()));
+                const double d = simulatedScan.scan[sec] - 0.05;
+                gl_nd_gaps->appendLineStrip(d * cos(ang), d * sin(ang), 0);
+            }
+            gl_nd_gaps->appendLineStrip(0, 0, 0);
+        }
+    }
+
+    // Movement direction:
+    const double d = no.desiredSpeed / m_simul_options.ROBOT_MAX_SPEED;
+    gl_line_direction->setLineCoords(
+        0, 0, 0, cos(no.desiredDirection) * d, sin(no.desiredDirection) * d, 0);
+}
+
+void MainWindow::updateViewsDynamicObjects()
+{
+    gl_robot->setLocation(m_robotPose.x, m_robotPose.y, 0);
+
+    QString tmpStrX = QString("%1").arg(m_robotPose.x,0,'f',3);
+    QString tmpStrY = QString("%1").arg(m_robotPose.y,0,'f',3);
+
+    ui->lineEditStartPointX->setText(tmpStrX);
+    ui->lineEditStartPointY->setText(tmpStrY);
+
+    // animate target: //
+    {
+        const double TARGET_BOUNCE_MIN = 0.7;
+        const double TARGET_BOUNCE_MAX = 1;
+
+        const double TARGET_BOUNCE_PERIOD = 1.0;
+        const double t =
+                fmod(m_runtime.Tac(), TARGET_BOUNCE_PERIOD) / TARGET_BOUNCE_PERIOD;
+
+        // Parabolic path
+        const double s =
+                4 * t * (TARGET_BOUNCE_MAX - TARGET_BOUNCE_MIN) * (1 - t) +
+                TARGET_BOUNCE_MIN;
+
+        gl_target->setLocation(m_targetPoint.x, m_targetPoint.y, 0);
+        gl_target->setScale(s);
+    }
+
+    ui->statusBar->showMessage( mrpt::format("Robot: (%.03f,%.03f)", m_robotPose.x, m_robotPose.y)
+                                .c_str());
+
+    qDebug("updateViewsDynamicObjects: Robot: (%.03f,%.03f) ->  Target: (%.03f,%.03f) ",
+            m_robotPose.x, m_robotPose.y,m_targetPoint.x, m_targetPoint.y);
+
+
+    ui->statusBar->showMessage(mrpt::format("Target: (%.03f,%.03f)", m_targetPoint.x, m_targetPoint.y)
+                               .c_str());
+
+    ui->widget->updateScene();
+   // ui->widget->repaint();
+
+    // Show/hide:
+     gl_robot_sensor_range->setVisibility(true);
+     gl_robot_path->setVisibility(true);
+}
+
+void MainWindow::on_btnNavLoadMap_clicked(){
+    initNavitionParmas();
+    qDebug()<<"init Navition params";
+}
+
+
+void MainWindow::on_btnNavStart_clicked()
+{
+    timRunSimul->start(1000);
+    qDebug()<<"start navigation";
+   reinitSimulator();
+
+   ui->btnNavStart->setEnabled(false);
+   ui->btnNavStart->update();
+   ui->btnNavEnd->setEnabled(true);
+   ui->btnNavEnd->update();
+
+}
+
+void MainWindow::on_btnNavEnd_clicked()
+{
+    timRunSimul->stop();
+
+    ui->btnNavStart->setEnabled(true);
+    ui->btnNavStart->update();
+    ui->btnNavEnd->setEnabled(false);
+    ui->btnNavEnd->update();
+    qDebug()<<"end navigation";
+
+}
+
+void MainWindow::on_btnNavStartPoint_clicked()
+{
+    ui->btnNavEndPoint->setEnabled(true);
+    ui->btnNavEndPoint->update();
+
+    if (m_cursorPickState != cpsPlaceRobot)
+        {
+            m_cursorPickState = cpsPlaceRobot;
+            //QtGL::theScene.getViewport()->getCamera();
+            ui->widget->setCursor(Qt::CrossCursor);
+
+            //m_plot3D->SetCursor(*wxCROSS_CURSOR);
+        }
+        else
+        {  // Cancel:
+            m_cursorPickState = cpsNone;
+            //m_plot3D->SetCursor(*wxSTANDARD_CURSOR);
+            ui->widget->setCursor(Qt::ArrowCursor);
+            m_gl_placing_robot->setVisibility(false);
+        }
+}
+
+void MainWindow::on_btnNavEndPoint_clicked()
+{
+    ui->btnNavStartPoint->setEnabled(true);
+    ui->btnNavStartPoint->update();
+
+    if (m_cursorPickState != cpsPickTarget)
+        {
+            m_cursorPickState = cpsPickTarget;
+             ui->widget->setCursor(Qt::CrossCursor);
+            //m_plot3D->SetCursor(*wxCROSS_CURSOR);
+        }
+        else
+        {  // Cancel:
+            m_cursorPickState = cpsNone;
+           // m_plot3D->SetCursor(*wxSTANDARD_CURSOR);
+            ui->widget->setCursor(Qt::ArrowCursor);
+            m_gl_placing_nav_target->setVisibility(false);
+        }
+}
+
+
+void MainWindow::on_btnNavMap_clicked()
+{
+    // tr("All files (*.*);;GRIDMAP(*.gridmap)") ,"GRIDMAP (*.gridmap)");
+    QString name = QFileDialog::getOpenFileName(this, "选择栅格地图打开","/home",tr("Images (*.png *.jpg *.gif *.png *.gif);;GRIDMAP(*.gridmap)"));
+    qDebug("load map from : %s",name);
+
+    if(name.isEmpty())    {
+        return;
+    }
+
+
+
+        const std::string fil = std::string(name.toStdString());
+
+        const std::string fil_ext = mrpt::system::extractFileExtension(fil, true);
+
+        if (mrpt::system::lowerCase(fil_ext) == "gridmap")
+        {
+            CFileGZInputStream f(fil);
+            f >> m_gridMap;
+        }
+        else
+        {
+            // Try loading the image:
+            CImage img;
+            if (!img.loadFromFile(fil, 0 /* force grayscale */))
+            {
+                QMessageBox::warning(this,tr("Error"),tr("Can't load the image file (check its format)."));
+
+            }
+            else
+            {
+                // We also need the size of each pixel:
+                double cx = -1;
+                double cy = -1;
+                double cell_size = 0.05;
+
+                bool ok;
+
+
+                    if (!m_gridMap.loadFromBitmap(img, cell_size, cx, cy)){
+                      QMessageBox::warning(this,tr("Error"),tr("Can't load the image file into the gridmap..."));
+                    }
+
+
+            }
+        }
+
+        updateMap3DView();
+        ui->widget->updateScene();
+
+}
+
+void MainWindow::on_btnSetRobotNavX_clicked()
+{
+    float robotStartPointX = ui->lineEditStartPointX->text().toFloat();
+    float robotStartPointY = ui->lineEditStartPointY->text().toFloat();
+
+    m_robotPose.x = robotStartPointX;
+    m_robotPose.y = robotStartPointY;
+    m_gl_placing_robot->setVisibility(true);
+    m_gl_placing_robot->setLocation(
+                robotStartPointX, robotStartPointY, 0.05);
+    qDebug("nav robot point  X=%.03f Y=%.04f Z=0", robotStartPointX, robotStartPointY);
+}
+
+void MainWindow::on_btnSetRobotNavY_clicked()
+{
+    float robotEndPointX = ui->lineEditEndPointX->text().toFloat();
+    float robotEndPointY = ui->lineEditEndPointY->text().toFloat();
+
+    qDebug("place the robot target point : %.03f %.03f",robotEndPointX,robotEndPointY);
+
+    m_targetPoint.x = robotEndPointX;
+    m_targetPoint.y = robotEndPointY;
+
+    m_gl_placing_nav_target->setVisibility(true);
+    m_gl_placing_nav_target->setLocation(
+                m_targetPoint.x, m_targetPoint.y, 0.05);
+    qDebug("nav target point  X=%.03f Y=%.04f Z=0",  m_targetPoint.x, m_targetPoint.y);
 
 }

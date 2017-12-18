@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>Folder-Open-icon.png</file>
+        <file>window-full-screen-icon.png</file>
+        <file>Close-2-icon.png</file>
+        <file>Actions-help-about-icon.png</file>
+        <file>help.html</file>
+        <file>Options-icon.png</file>
+        <file>camera-icon.png</file>
+    </qresource>
+</RCC>
